@@ -1,78 +1,94 @@
+import pygame
 import time
-import random
+import webbrowser
+import os
 
-score = 0
+# Initialize pygame
+pygame.init()
+pygame.mixer.init()
 
+# Function to play sound
+def play_sound(filename):
+    try:
+        pygame.mixer.Sound(filename).play()
+    except:
+        print("🔇 Sound file missing or unsupported!")
+
+# Function to open intro image
+def show_bridge_image():
+    img_path = os.path.realpath("roman_bridge.jpg")
+    webbrowser.open('file://' + img_path)
+
+# Game Introduction
 def intro():
-    print("🛡️ Welcome to the Athena Award Second Code – Bridge of Brilliance!")
-    print("You're a Roman engineer tasked with building a mighty bridge.")
-    print("To succeed, solve puzzles and answer questions about Roman bridge technology.")
-    input("Press Enter to begin your journey...")
+    print("🌉 Welcome to the Athena Award – Bridge of Brilliance!")
+    print("🛠️ Test your knowledge of Roman engineering and bridges.")
+    show_bridge_image()
+    input("Press Enter to begin your quest!\n")
 
+# Quiz Questions
 def ask_question(question, options, correct_index):
-    global score
-    print("\n" + question)
+    print(f"\n❓ {question}")
     for i, option in enumerate(options):
         print(f"{i + 1}. {option}")
+
     try:
         answer = int(input("Your answer (1-4): "))
         if answer == correct_index + 1:
             print("✅ Correct!")
-            score += 1
+            play_sound("correct.wav")
+            time.sleep(1)
+            return True
         else:
-            print(f"❌ Incorrect! The correct answer was: {options[correct_index]}")
-    except:
-        print("❌ Invalid input. Moving on.")
-
-def puzzle_bridge_arch():
-    print("\n🧱 PUZZLE: Build the arch!")
-    print("You need to select the correct keystone shape to finish the arch.")
-    print("Which stone shape will distribute weight best at the top of the arch?")
-    print("1. Square\n2. Triangle\n3. Wedge\n4. Circle")
-    choice = input("Your answer (1-4): ")
-    if choice == "3":
-        print("✅ Perfect! The wedge-shaped keystone locks the arch.")
-        return True
-    else:
-        print("❌ Oh no! The arch collapsed.")
+            print(f"❌ Incorrect. Correct answer: {options[correct_index]}")
+            play_sound("wrong.wav")
+            time.sleep(1)
+            return False
+    except ValueError:
+        print("⚠️ Invalid input. Please enter a number.")
         return False
 
-def stage_one():
-    print("\n🔨 Stage 1: Planning the Foundations")
-    ask_question(
-        "What material did Romans use to make their bridges last underwater?",
-        ["Brick mortar", "Lime plaster", "Pozzolanic concrete", "Marble paste"],
-        2
-    )
+# Main Game Function
+def main():
+    intro()
+    score = 0
 
-def stage_two():
-    print("\n🏗️ Stage 2: Constructing the Arches")
-    success = puzzle_bridge_arch()
-    if success:
-        global score
-        score += 2
+    questions = [
+        {
+            "question": "What material did the Romans often use to build bridges?",
+            "options": ["Wood", "Roman concrete", "Iron", "Marble"],
+            "answer": 1
+        },
+        {
+            "question": "What is the name of the most famous Roman aqueduct bridge in France?",
+            "options": ["Pont du Gard", "Tiber Bridge", "Aqua Claudia", "Ponte Sant'Angelo"],
+            "answer": 0
+        },
+        {
+            "question": "Which feature was key to Roman bridge strength?",
+            "options": ["Flat stones", "Steel cables", "Arches", "Wooden beams"],
+            "answer": 2
+        },
+        {
+            "question": "Roman bridges helped connect...",
+            "options": ["Villages only", "Trade routes and military roads", "Castles", "None"],
+            "answer": 1
+        }
+    ]
+
+    for q in questions:
+        correct = ask_question(q["question"], q["options"], q["answer"])
+        if correct:
+            score += 1
+
+    print(f"\n🏁 Quiz Complete! Your final score: {score}/{len(questions)}")
+    if score == len(questions):
+        print("🏆 You are a true Roman Engineer!")
+    elif score >= 2:
+        print("🔧 Not bad! You’re on your way.")
     else:
-        print("You must reinforce your knowledge before proceeding!")
+        print("🧱 Time to study more about bridges!")
 
-def stage_three():
-    print("\n🛶 Stage 3: Final Touches")
-    ask_question(
-        "Which famous Roman aqueduct bridge still stands in France?",
-        ["Pont Neuf", "Pont du Gard", "Ponte Vecchio", "Pont Alexandre III"],
-        1
-    )
-
-def end_game():
-    print("\n🎉 Congratulations, Roman Engineer!")
-    print(f"🏛️ Your final score: {score}/5")
-    if score >= 4:
-        print("🌟 You have earned the Athena Award – Second Code!")
-    else:
-        print("🔁 Try again to master the ancient secrets of bridge building.")
-
-# MAIN GAME LOOP
-intro()
-stage_one()
-stage_two()
-stage_three()
-end_game()
+# Run the game
+if __name__ == "__main__":
+    main()
