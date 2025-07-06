@@ -17,4 +17,6 @@ This command-line quiz challenges users with questions about Roman bridges, comb
    ```bash
    git clone https://github.com/E-e6/athena-bridge-game.git
    cd athena-bridge-game
+   [![Athena Award](https://img.shields.io/badge/Athena%20Award-2025-blue)](https://athenaaward.org)
+
    
